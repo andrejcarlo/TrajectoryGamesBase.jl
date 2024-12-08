@@ -1,4 +1,4 @@
-module MakieVizExt
+module MakieExt
 using TrajectoryGamesBase: TrajectoryGamesBase
 using Makie: Makie, @recipe
 using Colors: @colorant_str
@@ -6,7 +6,10 @@ using GeometryBasics: GeometryBasics
 
 Makie.plottype(::TrajectoryGamesBase.PolygonEnvironment) = Makie.Poly
 
-function Makie.convert_arguments(::Type{<:Makie.Poly}, environment::TrajectoryGamesBase.PolygonEnvironment)
+function Makie.convert_arguments(
+    ::Type{<:Makie.Poly},
+    environment::TrajectoryGamesBase.PolygonEnvironment,
+)
     geometry = GeometryBasics.Polygon(GeometryBasics.Point{2}.(environment.set.vertices))
     (geometry,)
 end
@@ -57,7 +60,7 @@ function Makie.plot!(viz::OpenLoopStrategyViz{<:Tuple{TrajectoryGamesBase.OpenLo
             endtime = something($(viz.endtime), lastindex($strategy.xs))
             subsampled_states = $strategy.xs[starttime:($(viz.position_subsampling)):endtime]
             if $(viz.dimensionality) == 2
-                [Makie.Point2f(xi[2], xi[1]) for xi in subsampled_states]
+                [Makie.Point2f(xi[1], xi[2]) for xi in subsampled_states]
             elseif $(viz.dimensionality) == 3
                 [Makie.Point3f(xi[1], xi[2], xi[3]) for xi in subsampled_states]
             else
